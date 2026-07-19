@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+results/
+spark-warehouse/
+metastore_db/
+derby.log
+.DS_Store
+.venv/
