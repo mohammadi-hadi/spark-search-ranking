@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Hadi Mohammadi" }]
-dependencies = ["pyspark>=3.5,<3.6"]
+dependencies = ["pyspark>=3.5,<3.6", "numpy>=1.24"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.4"]
