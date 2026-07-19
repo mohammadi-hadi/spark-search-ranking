@@ -39,14 +39,16 @@ Scale knobs: `--searches`, `--items`, `--users`, `--k` (results per search), `--
 
 60,000 searches, 8,000 items, k = 20, η = 0.65, seed 7 (`workflow_dispatch` demo job; reproduce with the command it runs):
 
+1.2M impressions (960,940 train / 239,060 eval), CI demo job, 3.6 minutes on a 4-core runner:
+
 | Ordering on held-out days | NDCG@10 | MRR |
 |---|---|---|
-| Production ranker (logged) | — | — |
-| Item-CTR popularity | — | — |
-| GBT, unweighted clicks | — | — |
-| GBT, IPS-weighted clicks | — | — |
+| Production ranker (logged) | 0.5284 | 0.4861 |
+| Item-CTR popularity | 0.8769 | 0.8448 |
+| GBT, unweighted clicks | 0.8686 | 0.8291 |
+| GBT, IPS-weighted clicks | 0.8712 | 0.8336 |
 
-*(table is filled from a real run — see the demo job logs)*
+The estimated propensities track the generator's curve closely (position 2: 0.602 vs. true 2^-0.65 = 0.637; position 10: 0.209 vs. 0.224). Two honest observations worth making: the IPS-weighted model consistently edges out the unweighted one, and smoothed item popularity is a very strong baseline here — with a homogeneous population (small per-user affinity), item CTR is nearly an oracle for quality. Increase `affinity_scale` and `eta` to grow the personalization and correction headroom; that sensitivity is itself the point of having a generator with knobs.
 
 ## Design notes
 
