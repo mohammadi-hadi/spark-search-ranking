@@ -10,12 +10,12 @@ Because the log is synthetic with a known generative process, the pipeline's cor
 
 ```mermaid
 flowchart LR
-    A[synthetic search log<br/>90% exploit / 10% explore] --> B[propensity estimation<br/>explore slice only]
-    A --> C[leakage-safe features<br/>cumulative windows]
-    B --> D[IPS weights]
-    C --> E[GBT re-ranker<br/>weightCol]
+    A["synthetic search log<br/>90% exploit / 10% explore"] --> B["propensity estimation<br/>explore slice only"]
+    A --> C["leakage-safe features<br/>cumulative windows"]
+    B --> D["IPS weights"]
+    C --> E["GBT re-ranker<br/>weightCol"]
     D --> E
-    E --> F[NDCG@10 / MRR<br/>vs. ground-truth grades]
+    E --> F["NDCG@10 / MRR<br/>vs. ground-truth grades"]
 ```
 
 ## What it demonstrates
