@@ -32,7 +32,7 @@ def ndcg_at_k(df: DataFrame, score_col: str, k: int = 10) -> float:
         return F.when(
             F.col(pos_col) <= k,
             (F.pow(F.lit(2.0), F.col("grade")) - F.lit(1.0))
-            / (F.log(F.lit(2.0), F.col(pos_col) + F.lit(1.0))),
+            / F.log2(F.col(pos_col) + F.lit(1.0)),
         ).otherwise(F.lit(0.0))
 
     per_search = gains.groupBy("search_id").agg(

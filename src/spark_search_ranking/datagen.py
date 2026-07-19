@@ -107,6 +107,16 @@ def generate_impressions(
         )
     )
 
+    # Grades rank the full candidate set, so a shown item's grade reflects how
+    # good it truly is among everything the search could have returned.
+    w_rel = Window.partitionBy("search_id").orderBy(F.col("true_relevance").desc(), "item_id")
+    cand = cand.withColumn("rel_rank", F.row_number().over(w_rel)).withColumn(
+        "grade",
+        F.when(F.col("rel_rank") <= 3, F.lit(2))
+        .when(F.col("rel_rank") <= 10, F.lit(1))
+        .otherwise(F.lit(0)),
+    )
+
     w_pos = Window.partitionBy("search_id").orderBy("sort_key", "item_id")
     impressions = (
         cand.withColumn("position", F.row_number().over(w_pos))
@@ -122,14 +132,6 @@ def generate_impressions(
     impressions = (
         impressions.withColumn("clicked", clicked)
         .withColumn("booked", F.col("clicked") & (F.rand(seed + 13) < p_book))
-    )
-
-    w_rel = Window.partitionBy("search_id").orderBy(F.col("true_relevance").desc(), "item_id")
-    impressions = impressions.withColumn("rel_rank", F.row_number().over(w_rel)).withColumn(
-        "grade",
-        F.when(F.col("rel_rank") <= 3, F.lit(2))
-        .when(F.col("rel_rank") <= 10, F.lit(1))
-        .otherwise(F.lit(0)),
     )
 
     return impressions.select(
