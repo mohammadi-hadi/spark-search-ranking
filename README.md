@@ -37,9 +37,7 @@ Scale knobs: `--searches`, `--items`, `--users`, `--k` (results per search), `--
 
 ## Example results
 
-60,000 searches, 8,000 items, k = 20, η = 0.65, seed 7 (`workflow_dispatch` demo job; reproduce with the command it runs):
-
-1.2M impressions (960,940 train / 239,060 eval), CI demo job, 3.6 minutes on a 4-core runner:
+60,000 searches, 8,000 items, k = 20, η = 0.65, seed 7 — 1.2M impressions (960,940 train / 239,060 eval), 3.6 minutes on a 4-core CI runner (the `workflow_dispatch` demo job; reproduce with the command it runs):
 
 | Ordering on held-out days | NDCG@10 | MRR |
 |---|---|---|
