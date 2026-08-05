@@ -1,28 +1,25 @@
 """End-to-end smoke and quality test at reduced scale."""
 
-import argparse
+import pytest
 
-from spark_search_ranking.pipeline import run
+from spark_search_ranking.pipeline import PipelineConfig, run
 
-ARGS = argparse.Namespace(
+CFG = PipelineConfig(
     searches=6000,
     users=600,
     items=1200,
     cities=12,
-    days=30,
     k=10,
-    eta=0.65,
     explore_frac=0.15,
-    clip=0.05,
     max_iter=8,
     max_depth=4,
-    seed=7,
 )
 
 
 def test_pipeline_end_to_end(spark):
-    metrics = run(spark, ARGS)
+    result = run(spark, CFG)
 
+    metrics = result["metrics"]
     assert set(metrics) == {
         "production ranker (logged)",
         "item-CTR popularity",
@@ -37,3 +34,13 @@ def test_pipeline_end_to_end(spark):
     ips = metrics["GBT, IPS-weighted clicks"]["ndcg@10"]
     prod = metrics["production ranker (logged)"]["ndcg@10"]
     assert ips > prod
+
+    assert result["config"]["searches"] == CFG.searches
+    assert result["counts"]["train"] > 0 and result["counts"]["eval"] > 0
+    props = {p["position"]: p["propensity"] for p in result["propensities"]}
+    assert props[1] == pytest.approx(1.0)
+
+
+def test_config_defaults_are_complete():
+    cfg = PipelineConfig()
+    assert cfg.searches > 0 and cfg.days > 1 and 0.0 < cfg.explore_frac < 1.0

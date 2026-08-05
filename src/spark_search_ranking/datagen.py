@@ -13,8 +13,11 @@ configurable fraction of searches ("explore" traffic) is ranked uniformly at
 random, which is what makes unbiased propensity estimation possible downstream.
 
 Everything is generated with Spark column expressions (no UDFs) and
-hash/seed-based pseudo-randomness, so runs are reproducible and scale is a
-matter of the row counts passed in. The true relevance and the per-search
+hash/seed-based pseudo-randomness. Because Spark's ``rand``/``randn`` draws
+depend on the partition layout, the generators pin their ``spark.range``
+partition counts (``num_partitions``): with the same Spark version and
+``spark.sql.shuffle.partitions``, a given seed yields the identical log on
+any machine, regardless of core count. The true relevance and the per-search
 relevance grade are kept in the output for evaluation only — they must never
 be used as model features.
 """
@@ -30,11 +33,11 @@ def _sigmoid(x):
 
 
 def generate_catalog(
-    spark: SparkSession, n_items: int, n_cities: int, seed: int = 7
+    spark: SparkSession, n_items: int, n_cities: int, seed: int = 7, num_partitions: int = 8
 ) -> DataFrame:
     """Item catalog: city assignment, latent quality, and a quality-correlated price."""
     return (
-        spark.range(n_items)
+        spark.range(n_items, numPartitions=num_partitions)
         .withColumnRenamed("id", "item_id")
         .withColumn("city_id", F.pmod(F.hash("item_id", F.lit(seed)), F.lit(n_cities)))
         .withColumn("quality", F.randn(seed + 1))
@@ -57,10 +60,11 @@ def generate_searches(
     n_days: int = 30,
     explore_frac: float = 0.1,
     seed: int = 7,
+    num_partitions: int = 8,
 ) -> DataFrame:
     """Search events: user, city, timestamp, and an explore-traffic flag."""
     return (
-        spark.range(n_searches)
+        spark.range(n_searches, numPartitions=num_partitions)
         .withColumnRenamed("id", "search_id")
         .withColumn("user_id", F.pmod(F.hash("search_id", F.lit(seed + 3)), F.lit(n_users)))
         .withColumn("city_id", F.pmod(F.hash("search_id", F.lit(seed + 4)), F.lit(n_cities)))
@@ -165,8 +169,11 @@ def generate_log(
     rank_noise: float = 1.2,
     affinity_scale: float = 0.8,
     seed: int = 7,
+    num_partitions: int = 8,
 ) -> DataFrame:
     """End-to-end convenience wrapper: catalog + searches -> impression log."""
-    catalog = generate_catalog(spark, n_items, n_cities, seed)
-    searches = generate_searches(spark, n_searches, n_users, n_cities, n_days, explore_frac, seed)
+    catalog = generate_catalog(spark, n_items, n_cities, seed, num_partitions)
+    searches = generate_searches(
+        spark, n_searches, n_users, n_cities, n_days, explore_frac, seed, num_partitions
+    )
     return generate_impressions(searches, catalog, k, eta, rank_noise, affinity_scale, seed)

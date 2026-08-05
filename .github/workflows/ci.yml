@@ -17,14 +17,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: "3.10"
+            pyspark: "pyspark[sql]>=3.5,<3.6"
+          - python: "3.12"
+            pyspark: "pyspark[sql]>=4,<4.3"
+          - python: "3.13"
+            pyspark: "pyspark[sql]>=4,<4.3"
+    name: test (py${{ matrix.python }}, ${{ matrix.pyspark }})
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-java@v5
         with:
-          python-version: "3.11"
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
           cache: pip
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev]" "${{ matrix.pyspark }}"
       - name: Lint
         run: ruff check src tests
       - name: Test
@@ -35,9 +50,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: Build and check distributions
         run: |
           pip install build twine
@@ -50,11 +65,15 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-java@v5
         with:
-          python-version: "3.11"
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
           cache: pip
       - name: Install
         run: pip install -e .
       - name: Run pipeline
-        run: python -m spark_search_ranking.pipeline --searches 60000 --users 5000 --items 8000 --cities 60
+        run: spark-search-ranking --searches 60000 --users 5000 --items 8000 --cities 60
