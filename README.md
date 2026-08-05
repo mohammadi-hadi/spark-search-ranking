@@ -25,12 +25,20 @@ flowchart LR
 - **Spark at the core**: no UDFs anywhere — generation, features, and metrics are all column expressions and window functions, so everything scales with the cluster.
 - **Testable ML**: a deterministic generator with known ground truth turns "does the correction work?" into unit tests, including a hand-computed NDCG case and a no-leakage assertion.
 
-## Quickstart
+## Installation
 
 ```bash
-pip install -e ".[dev]"
-pytest                                            # full suite, a few minutes on a laptop
-python -m spark_search_ranking.pipeline --searches 20000
+pip install "spark-search-ranking @ git+https://github.com/mohammadi-hadi/spark-search-ranking.git"
+```
+
+Pin a release by appending `@v0.1.0` to the URL; wheels and sdists are also attached to [GitHub Releases](https://github.com/mohammadi-hadi/spark-search-ranking/releases). Requires Python ≥ 3.10 and a JVM (Java 8/11/17) for Spark.
+
+## Quickstart
+
+Installing gives you the `spark_search_ranking` library and a `spark-search-ranking` console script:
+
+```bash
+spark-search-ranking --searches 20000             # or: python -m spark_search_ranking.pipeline
 ```
 
 Scale knobs: `--searches`, `--items`, `--users`, `--k` (results per search), `--eta` (position-bias strength), `--explore-frac`. The candidate join (searches × items-in-city) is the scale hotspot; the catalog side is broadcast. On a cluster, submit the same module with `spark-submit`.
@@ -55,6 +63,25 @@ The estimated propensities track the generator's curve closely (position 2: 0.60
 - **Why is position not a feature?** The ranker chooses positions at serving time; training on logged position would leak the incumbent ranker's decisions into the model.
 - **Evaluation against ground truth, not clicks.** Held-out clicks are themselves position-biased; evaluating on them rewards mimicking the old ranker. The generator's true relevance (graded per search) gives an unbiased target — the luxury a synthetic environment buys.
 - **Limitations.** The click model is examination-based (cascade-style browsing, no trust bias); the propensity estimator assumes position-independent relevance in explore traffic (true here by construction); IPS clipping trades a small bias for bounded variance.
+
+## Development
+
+```bash
+git clone https://github.com/mohammadi-hadi/spark-search-ranking.git
+cd spark-search-ranking
+pip install -e ".[dev]"
+pytest                                            # full suite, a few minutes on a laptop
+```
+
+## Releasing
+
+Bump `__version__` in `src/spark_search_ranking/__init__.py`, commit, then tag and push:
+
+```bash
+git tag v0.2.0 && git push origin v0.2.0
+```
+
+The [release workflow](.github/workflows/release.yml) builds the sdist and wheel, verifies the tag matches the package version, and attaches both to a GitHub Release. To additionally publish to PyPI, configure [trusted publishing](https://docs.pypi.org/trusted-publishers/) for this repository (environment `pypi`) and set the repository variable `PYPI_PUBLISH` to `true`.
 
 ## References
 
