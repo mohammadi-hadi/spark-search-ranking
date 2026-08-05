@@ -22,7 +22,7 @@ flowchart LR
 
 - **Position-bias correction**: propensities estimated from randomized traffic only (estimating them from exploit traffic confounds examination with relevance — the classic mistake), IPS weighting with variance clipping.
 - **Leakage-safe feature engineering**: item statistics from the training window only with cold-start priors; per-user history via cumulative windows over strictly earlier events (`rowsBetween(unboundedPreceding, -1)`).
-- **Spark at the core**: no UDFs anywhere — generation, features, and metrics are all column expressions and window functions, so everything scales with the cluster.
+- **Spark at the core**: no UDFs anywhere — generation, features, and metrics are all column expressions and window functions, so everything scales with the cluster. Generation pins its partition layout, so a given seed yields the identical log on any machine (same Spark version and shuffle settings).
 - **Testable ML**: a deterministic generator with known ground truth turns "does the correction work?" into unit tests, including a hand-computed NDCG case and a no-leakage assertion.
 
 ## Installation
@@ -31,7 +31,7 @@ flowchart LR
 pip install "spark-search-ranking @ git+https://github.com/mohammadi-hadi/spark-search-ranking.git"
 ```
 
-Pin a release by appending `@v0.1.0` to the URL; wheels and sdists are also attached to [GitHub Releases](https://github.com/mohammadi-hadi/spark-search-ranking/releases). Requires Python ≥ 3.10 and a JVM (Java 8/11/17) for Spark.
+Pin a release by appending `@v0.2.0` to the URL; wheels and sdists are also attached to [GitHub Releases](https://github.com/mohammadi-hadi/spark-search-ranking/releases). Requires Python ≥ 3.10, PySpark 3.5–4.2 (both tested in CI), and a JVM — Java 17 works across the whole supported range.
 
 ## Quickstart
 
@@ -41,7 +41,37 @@ Installing gives you the `spark_search_ranking` library and a `spark-search-rank
 spark-search-ranking --searches 20000             # or: python -m spark_search_ranking.pipeline
 ```
 
-Scale knobs: `--searches`, `--items`, `--users`, `--k` (results per search), `--eta` (position-bias strength), `--explore-frac`. The candidate join (searches × items-in-city) is the scale hotspot; the catalog side is broadcast. On a cluster, submit the same module with `spark-submit`.
+Scale knobs: `--searches`, `--items`, `--users`, `--k` (results per search), `--eta` (position-bias strength), `--explore-frac`; `--output metrics.json` writes the full result (config, propensities, metrics) as JSON. The candidate join (searches × items-in-city) is the scale hotspot; the catalog side is broadcast. On a cluster, submit the same module with `spark-submit`.
+
+## Use as a library
+
+Every stage is a plain function over DataFrames, so each runs standalone on your own log:
+
+```python
+import spark_search_ranking as ssr
+
+log = spark.read.parquet("impressions/")     # or ssr.generate_log(spark) to try it out
+
+props = ssr.estimate_position_bias(log.filter("day < 24"))   # explore slice only
+weighted = ssr.add_ips_weights(log, props, clip=0.05)
+feats = ssr.build_features(weighted, ssr.item_statistics(weighted.filter("day < 24")))
+model = ssr.train_reranker(feats.filter("day < 24"), weighted=True)
+scored = ssr.score(model, feats.filter("day >= 24"), "score")
+print(ssr.ndcg_at_k(scored, "score", k=10))  # needs a ground-truth `grade` column
+```
+
+Expected columns per stage (one row = one impression):
+
+| Stage | Needs |
+|---|---|
+| `estimate_position_bias` | `is_explore`, `position`, `clicked` |
+| `add_ips_weights` | `position`, `clicked` |
+| `item_statistics` | `item_id`, `clicked`, `booked` |
+| `build_features` | `search_id`, `user_id`, `item_id`, `ts`, `price`, `clicked` |
+| `train_reranker` / `score` | the `FEATURE_COLS` produced by `build_features` (plus `clicked` and `ips_weight` to train) |
+| `ndcg_at_k` / `mrr_top_grade` | `search_id`, `item_id`, `grade`, and the score column |
+
+The whole comparison pipeline is also callable: `ssr.run(spark, ssr.PipelineConfig(searches=50_000))` returns config, split sizes, estimated propensities, and metrics as one dict.
 
 ## Example results
 
