@@ -75,16 +75,16 @@ The whole comparison pipeline is also callable: `ssr.run(spark, ssr.PipelineConf
 
 ## Example results
 
-60,000 searches, 8,000 items, k = 20, η = 0.65, seed 7 — 1.2M impressions (960,940 train / 239,060 eval), 3.6 minutes on a 4-core CI runner (the `workflow_dispatch` demo job; reproduce with the command it runs):
+60,000 searches, 8,000 items, k = 20, η = 0.65, seed 7 — 1.2M impressions (960,940 train / 239,060 eval), 111 seconds on a 4-core CI runner with PySpark 4.2 on Python 3.12 (the `workflow_dispatch` demo job; reproduce with the command it runs):
 
 | Ordering on held-out days | NDCG@10 | MRR |
 |---|---|---|
-| Production ranker (logged) | 0.5284 | 0.4861 |
-| Item-CTR popularity | 0.8769 | 0.8448 |
-| GBT, unweighted clicks | 0.8686 | 0.8291 |
-| GBT, IPS-weighted clicks | 0.8712 | 0.8336 |
+| Production ranker (logged) | 0.5389 | 0.5041 |
+| Item-CTR popularity | 0.8825 | 0.8529 |
+| GBT, unweighted clicks | 0.8814 | 0.8492 |
+| GBT, IPS-weighted clicks | 0.8783 | 0.8445 |
 
-The estimated propensities track the generator's curve closely (position 2: 0.602 vs. true 2^-0.65 = 0.637; position 10: 0.209 vs. 0.224). Two honest observations worth making: the IPS-weighted model consistently edges out the unweighted one, and smoothed item popularity is a very strong baseline here — with a homogeneous population (small per-user affinity), item CTR is nearly an oracle for quality. Increase `affinity_scale` and `eta` to grow the personalization and correction headroom; that sensitivity is itself the point of having a generator with knobs.
+The estimated propensities track the generator's curve closely (position 2: 0.649 vs. true 2^-0.65 = 0.637; position 10: 0.218 vs. 0.224). An honest observation: at this configuration the learned rankers and smoothed item popularity all land within ~0.005 NDCG of one another — with a homogeneous population (small per-user affinity), item CTR is nearly an oracle for quality, so there is little personalization or correction headroom for the click models to exploit. Increase `affinity_scale` and `eta` to grow that headroom; that sensitivity is itself the point of having a generator with knobs.
 
 ## Design notes
 
