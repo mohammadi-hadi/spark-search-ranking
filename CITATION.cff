@@ -6,6 +6,7 @@ authors:
   - family-names: Mohammadi
     given-names: Hadi
 repository-code: https://github.com/mohammadi-hadi/spark-search-ranking
+doi: 10.5281/zenodo.21802883
 license: MIT
 version: 0.2.1
 date-released: "2026-08-05"
