@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from .pipeline import PipelineConfig, run
     from .rank import score, train_reranker
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 _EXPORTS = {
     "generate_catalog": "datagen",
