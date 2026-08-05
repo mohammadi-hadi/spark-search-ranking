@@ -5,9 +5,11 @@ Two safety rules are enforced by construction:
 * Item aggregates (smoothed CTR / booking rate) are computed on the training
   window only and joined onto every row, with the prior mean as the cold-start
   fallback — the evaluation window never contributes to its own features.
-* Per-user history uses a cumulative window over strictly earlier events
-  (``rowsBetween(unboundedPreceding, -1)``), so a row can never see itself or
-  the future, regardless of how the data is split afterwards.
+* Per-user history uses a cumulative window over strictly earlier timestamps
+  (``rangeBetween(unboundedPreceding, -1)`` over ``ts``), so a row can never
+  see itself, the future, or any other row of its own results page. The
+  same-page exclusion matters at serving time: the ranker scores a whole page
+  before any click on that page can be observed.
 
 ``true_relevance``, ``grade``, ``quality`` and ``position`` are deliberately
 not features: the first three are evaluation-only ground truth, and position
@@ -58,10 +60,13 @@ def build_features(impressions: DataFrame, item_stats: DataFrame) -> DataFrame:
         .withColumn("item_book_rate", F.coalesce(F.col("item_book_rate"), F.lit(book_prior)))
     )
 
+    # Range frame over strictly earlier timestamps: all impressions of a search
+    # share the search's ts, so the frame can only contain whole earlier
+    # searches — never rows from this impression's own results page.
     w_user = (
         Window.partitionBy("user_id")
-        .orderBy("ts", "search_id", "position")
-        .rowsBetween(Window.unboundedPreceding, -1)
+        .orderBy("ts")
+        .rangeBetween(Window.unboundedPreceding, -1)
     )
     out = out.withColumn(
         "user_prior_ctr",

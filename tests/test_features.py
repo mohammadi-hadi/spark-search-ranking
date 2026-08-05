@@ -37,6 +37,19 @@ def test_user_history_has_no_leakage(spark):
     assert off.count() == 0
 
 
+def test_user_history_excludes_current_search(spark):
+    _, feats = _featured(spark)
+    # All impressions of a search share its timestamp, so the strictly-earlier
+    # window must give every row of a search the same history value: clicks on
+    # a results page must never feed features of later positions on that page.
+    varying = (
+        feats.groupBy("search_id")
+        .agg(F.countDistinct("user_prior_ctr").alias("n"))
+        .filter(F.col("n") > 1)
+    )
+    assert varying.count() == 0
+
+
 def test_cold_items_get_prior(spark):
     log, _ = _featured(spark)
     train = log.filter(F.col("day") < 24)

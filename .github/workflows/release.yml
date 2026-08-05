@@ -13,9 +13,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: Build sdist and wheel
         run: |
           pip install build twine
@@ -24,7 +24,7 @@ jobs:
       - name: Verify tag matches package version
         run: |
           pip install --no-deps dist/*.whl
-          pkg="$(python -c 'import spark_search_ranking; print(spark_search_ranking.__version__)')"
+          pkg="$(python -c 'from importlib.metadata import version; print(version("spark-search-ranking"))')"
           tag="${GITHUB_REF_NAME#v}"
           if [ "$pkg" != "$tag" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match __version__ $pkg"
