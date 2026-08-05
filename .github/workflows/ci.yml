@@ -30,6 +30,20 @@ jobs:
       - name: Test
         run: pytest -q
 
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build and check distributions
+        run: |
+          pip install build twine
+          python -m build
+          twine check --strict dist/*
+
   demo:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
