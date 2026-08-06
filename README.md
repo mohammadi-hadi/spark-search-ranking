@@ -43,6 +43,13 @@ spark-search-ranking --searches 20000             # or: python -m spark_search_r
 
 Scale knobs: `--searches`, `--items`, `--users`, `--k` (results per search), `--eta` (position-bias strength), `--explore-frac`; `--output metrics.json` writes the full result (config, propensities, metrics) as JSON. The candidate join (searches × items-in-city) is the scale hotspot; the catalog side is broadcast. On a cluster, submit the same module with `spark-submit`.
 
+If you would rather not install a JVM, the published image already has one:
+
+```bash
+docker run --rm ghcr.io/mohammadi-hadi/spark-search-ranking                    # demo scale
+docker run --rm ghcr.io/mohammadi-hadi/spark-search-ranking --searches 20000   # full run
+```
+
 ## Use as a library
 
 Every stage is a plain function over DataFrames, so each runs standalone on your own log:
