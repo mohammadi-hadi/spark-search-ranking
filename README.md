@@ -127,6 +127,22 @@ The [release workflow](.github/workflows/release.yml) builds the sdist and wheel
 - Wang, Bendersky, Metzler & Najork — *Learning to Rank with Selection Bias in Personal Search*, SIGIR 2016.
 - Bernardi, Mavridis & Estevez — *150 Successful Machine Learning Models: 6 Lessons Learned at Booking.com*, KDD 2019.
 
+## Citation
+
+If this implementation is useful in your research, please cite it (see
+[CITATION.cff](CITATION.cff)):
+
+```bibtex
+@software{mohammadi_spark_search_ranking,
+  author  = {Mohammadi, Hadi},
+  title   = {spark-search-ranking: counterfactual learning-to-rank for marketplace search logs in PySpark},
+  url     = {https://github.com/mohammadi-hadi/spark-search-ranking},
+  doi     = {10.5281/zenodo.21802883},
+  version = {0.2.2},
+  year    = {2026}
+}
+```
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
