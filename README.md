@@ -1,6 +1,6 @@
 # spark-search-ranking
 
-[![CI](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml) [![DOI](https://zenodo.org/badge/1305356952.svg)](https://zenodo.org/badge/latestdoi/1305356952)
+[![CI](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml) [![DOI](https://zenodo.org/badge/1305356952.svg)](https://zenodo.org/badge/latestdoi/1305356952) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Counterfactual learning-to-rank for marketplace search logs, implemented end to end in PySpark: position-bias estimation from randomized traffic, inverse-propensity-weighted training, and NDCG evaluation against known ground truth.
 
