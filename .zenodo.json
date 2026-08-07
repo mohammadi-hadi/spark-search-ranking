@@ -1,0 +1,22 @@
+{
+  "title": "spark-search-ranking: counterfactual learning-to-rank for marketplace search logs in PySpark",
+  "description": "Counterfactual learning-to-rank for marketplace search logs in PySpark: position-bias estimation, IPS-weighted training, NDCG evaluation against known ground truth",
+  "creators": [
+    {
+      "name": "Mohammadi, Hadi",
+      "orcid": "0000-0003-0860-9200",
+      "affiliation": "Utrecht University"
+    }
+  ],
+  "license": "mit",
+  "upload_type": "software",
+  "keywords": [
+    "counterfactual learning",
+    "learning to rank",
+    "machine learning",
+    "position bias",
+    "pyspark",
+    "recommender systems",
+    "spark"
+  ]
+}
