@@ -3,6 +3,7 @@
 # spark-search-ranking
 
 [![CI](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/spark-search-ranking)](https://pypi.org/project/spark-search-ranking/)
 [![DOI](https://zenodo.org/badge/1305356952.svg)](https://zenodo.org/badge/latestdoi/1305356952)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
