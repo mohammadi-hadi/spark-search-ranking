@@ -1,8 +1,15 @@
+<div align="center">
+
 # spark-search-ranking
 
-[![CI](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml) [![DOI](https://zenodo.org/badge/1305356952.svg)](https://zenodo.org/badge/latestdoi/1305356952) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammadi-hadi/spark-search-ranking/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/1305356952.svg)](https://zenodo.org/badge/latestdoi/1305356952)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Counterfactual learning-to-rank for marketplace search logs, implemented end to end in PySpark: position-bias estimation from randomized traffic, inverse-propensity-weighted training, and NDCG evaluation against known ground truth.
+*Counterfactual learning-to-rank for marketplace search logs, implemented end to end in PySpark: position-bias estimation from randomized traffic, inverse-propensity-weighted training, and NDCG evaluation against known ground truth.*
+
+</div>
 
 Clicks in search logs are a biased signal — users click what they *see*, and what they see is what the incumbent ranker put on top. Training the next ranker naively on those clicks bakes the old ranker's mistakes in. This project is a compact, fully tested reference implementation of the standard correction: estimate examination propensities from a randomized "explore" slice, reweight clicks by inverse propensity, and re-rank.
 
