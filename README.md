@@ -36,10 +36,10 @@ flowchart LR
 ## Installation
 
 ```bash
-pip install "spark-search-ranking @ git+https://github.com/mohammadi-hadi/spark-search-ranking.git"
+pip install spark-search-ranking
 ```
 
-Pin a release by appending `@v0.2.0` to the URL; wheels and sdists are also attached to [GitHub Releases](https://github.com/mohammadi-hadi/spark-search-ranking/releases). Requires Python ≥ 3.10, PySpark 3.5–4.2 (both tested in CI), and a JVM — Java 17 works across the whole supported range.
+Pin a version with `pip install spark-search-ranking==0.2.2`; wheels and sdists are also attached to [GitHub Releases](https://github.com/mohammadi-hadi/spark-search-ranking/releases). Requires Python ≥ 3.10, PySpark 3.5–4.2 (both tested in CI), and a JVM — Java 17 works across the whole supported range.
 
 ## Quickstart
 
