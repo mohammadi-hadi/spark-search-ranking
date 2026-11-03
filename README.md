@@ -128,6 +128,10 @@ git tag v0.2.0 && git push origin v0.2.0
 
 The [release workflow](https://github.com/mohammadi-hadi/spark-search-ranking/blob/main/.github/workflows/release.yml) builds the sdist and wheel, verifies the tag matches the package version, and attaches both to a GitHub Release. To additionally publish to PyPI, configure [trusted publishing](https://docs.pypi.org/trusted-publishers/) for this repository (environment `pypi`) and set the repository variable `PYPI_PUBLISH` to `true`.
 
+## Related
+
+- [rankkit](https://github.com/mohammadi-hadi/rankkit): evaluate the re-ranker with confidence intervals and position-bias-corrected click metrics.
+
 ## References
 
 - Joachims, Swaminathan & Schnabel — *Unbiased Learning-to-Rank with Biased Feedback*, WSDM 2017.
