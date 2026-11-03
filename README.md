@@ -6,7 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/spark-search-ranking)](https://pypi.org/project/spark-search-ranking/)
 [![DOI](https://zenodo.org/badge/1305356952.svg)](https://zenodo.org/badge/latestdoi/1305356952)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/mohammadi-hadi/spark-search-ranking/blob/main/LICENSE)
 
 *Counterfactual learning-to-rank for marketplace search logs, implemented end to end in PySpark: position-bias estimation from randomized traffic, inverse-propensity-weighted training, and NDCG evaluation against known ground truth.*
 
@@ -126,7 +126,7 @@ Bump `__version__` in `src/spark_search_ranking/__init__.py`, commit, then tag a
 git tag v0.2.0 && git push origin v0.2.0
 ```
 
-The [release workflow](.github/workflows/release.yml) builds the sdist and wheel, verifies the tag matches the package version, and attaches both to a GitHub Release. To additionally publish to PyPI, configure [trusted publishing](https://docs.pypi.org/trusted-publishers/) for this repository (environment `pypi`) and set the repository variable `PYPI_PUBLISH` to `true`.
+The [release workflow](https://github.com/mohammadi-hadi/spark-search-ranking/blob/main/.github/workflows/release.yml) builds the sdist and wheel, verifies the tag matches the package version, and attaches both to a GitHub Release. To additionally publish to PyPI, configure [trusted publishing](https://docs.pypi.org/trusted-publishers/) for this repository (environment `pypi`) and set the repository variable `PYPI_PUBLISH` to `true`.
 
 ## References
 
@@ -138,7 +138,7 @@ The [release workflow](.github/workflows/release.yml) builds the sdist and wheel
 ## Citation
 
 If this implementation is useful in your research, please cite it (see
-[CITATION.cff](CITATION.cff)):
+[CITATION.cff](https://github.com/mohammadi-hadi/spark-search-ranking/blob/main/CITATION.cff)):
 
 ```bibtex
 @software{mohammadi_spark_search_ranking,
@@ -153,4 +153,4 @@ If this implementation is useful in your research, please cite it (see
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/mohammadi-hadi/spark-search-ranking/blob/main/LICENSE).
